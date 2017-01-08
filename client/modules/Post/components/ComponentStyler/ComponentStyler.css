@@ -16,6 +16,10 @@
   color: #616161;
 }
 
+.custom-section {
+  display: flex;
+}
+
 .author-name{
   font-size: 16px;
   margin-bottom: 16px;

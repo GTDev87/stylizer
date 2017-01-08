@@ -78,15 +78,19 @@ class ComponentStyler extends Component {
     return (
       <div className={styles['single-post']}>
         <h3 className={styles['post-title']}>{componentName}</h3>
-        <div><StyledComponent {...extraProps} /></div>
-        {propsError && <div>PROPS ERROR</div>}
         <div>
-          <h4>Styles</h4>
-          <div><textarea value={style} onChange={this.handleStyleEdit} /></div>
+          <div><StyledComponent {...extraProps} /></div>
+          {propsError && <div>PROPS ERROR</div>}
         </div>
-        <div>
-          <h4>Props</h4>
-          <div><textarea value={propsString} onChange={this.handlePropsEdit} /></div>
+        <div className={styles['custom-section']}>
+          <div>
+            <h4>Styles</h4>
+            <div><textarea value={style} onChange={this.handleStyleEdit} /></div>
+          </div>
+          <div>
+            <h4>Props</h4>
+            <div><textarea value={propsString} onChange={this.handlePropsEdit} /></div>
+          </div>
         </div>
         <hr className={styles.divider} />
       </div>
