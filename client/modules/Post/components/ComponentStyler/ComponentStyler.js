@@ -38,33 +38,56 @@ class ComponentStyler extends Component {
   constructor(...args) {
     super(...args);
 
-    this.state = { style: '', error: false };
+    this.state = {
+      style: '',
+      propsString: '{}',
+      loadError: false,
+      propsError: false,
+    };
   }
 
   @autobind
-  handleTextEdit({ target: { value: style } }) {
+  handleStyleEdit({ target: { value: style } }) {
     this.setState({ style });
   }
 
-  //
+  @autobind
+  handlePropsEdit({ target: { value: propsString } }) {
+    try {
+      JSON.parse(propsString);
+      this.setState({ propsError: false, propsString });
+    } catch (e) {
+      this.setState({ propsError: true, propsString });
+    }
+  }
+
   unstable_handleError() { // eslint-disable-line camelcase
-    this.setState({ error: true });
+    this.setState({ loadError: true });
   }
 
   render() {
     const { UIComponent, componentName } = this.props;
-    const { style, error } = this.state;
+    const { style, propsString, loadError, propsError } = this.state;
 
-    if (error) { return <ComponentError componentName={componentName} />; }
+    if (loadError) { return <ComponentError componentName={componentName} />; }
     if (!UIComponent || typeof UIComponent !== 'function') { return <Nullcomponent componentName={componentName} />; }
 
+    const extraProps = !propsError ? JSON.parse(propsString) : {};
     const StyledComponent = styled(UIComponent)`${style}`;
 
     return (
       <div className={styles['single-post']}>
         <h3 className={styles['post-title']}>{componentName}</h3>
-        <div><StyledComponent /></div>
-        <div><textarea value={style} onChange={this.handleTextEdit} /></div>
+        <div><StyledComponent {...extraProps} /></div>
+        {propsError && <div>PROPS ERROR</div>}
+        <div>
+          <h4>Styles</h4>
+          <div><textarea value={style} onChange={this.handleStyleEdit} /></div>
+        </div>
+        <div>
+          <h4>Props</h4>
+          <div><textarea value={propsString} onChange={this.handlePropsEdit} /></div>
+        </div>
         <hr className={styles.divider} />
       </div>
     );
