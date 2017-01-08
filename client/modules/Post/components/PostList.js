@@ -1,19 +1,25 @@
 import React, { PropTypes } from 'react';
 
 // Import Components
-import PostListItem from './PostListItem/PostListItem';
+import ComponentStyler from './ComponentStyler/ComponentStyler';
+import * as ant from 'antd';
 
-function PostList(props) {
+const excludeList = ['Carousel', 'Tooltip']; // fuckers
+
+function PostList() {
   return (
     <div className="listView">
+      <ant.Button>ANT HELLO BUTTON</ant.Button>
       {
-        props.posts.map(post => (
-          <PostListItem
-            post={post}
-            key={post.cuid}
-            onDelete={() => props.handleDeletePost(post.cuid)}
-          />
-        ))
+        Object.entries(ant)
+          .filter(([componentName]) => !excludeList.includes(componentName))
+          .map(([componentName, UIComponent]) =>
+            <ComponentStyler
+              key={componentName}
+              componentName={componentName}
+              UIComponent={UIComponent}
+            />
+        )
       }
     </div>
   );
