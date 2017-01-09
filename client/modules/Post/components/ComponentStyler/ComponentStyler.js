@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 
 import autobind from 'autobind-decorator';
+import JSON5 from 'json5';
 
 // Import Style
 import styles from './ComponentStyler.css';
@@ -40,7 +41,7 @@ class ComponentStyler extends Component {
 
     this.state = {
       style: '',
-      propsString: '{}',
+      propsString: '{\n\n}',
       loadError: false,
       propsError: false,
     };
@@ -54,7 +55,7 @@ class ComponentStyler extends Component {
   @autobind
   handlePropsEdit({ target: { value: propsString } }) {
     try {
-      JSON.parse(propsString);
+      JSON5.parse(propsString);
       this.setState({ propsError: false, propsString });
     } catch (e) {
       this.setState({ propsError: true, propsString });
@@ -72,7 +73,7 @@ class ComponentStyler extends Component {
     if (loadError) { return <ComponentError componentName={componentName} />; }
     if (!UIComponent || typeof UIComponent !== 'function') { return <Nullcomponent componentName={componentName} />; }
 
-    const extraProps = !propsError ? JSON.parse(propsString) : {};
+    const extraProps = !propsError ? JSON5.parse(propsString) : {};
     const StyledComponent = styled(UIComponent)`${style}`;
 
     return (
@@ -80,7 +81,7 @@ class ComponentStyler extends Component {
         <h3 className={styles['post-title']}>{componentName}</h3>
         <div>
           <div><StyledComponent {...extraProps} /></div>
-          {propsError && <div>PROPS ERROR</div>}
+          {propsError && <div className={styles.error}>PROPS ERROR</div>}
         </div>
         <div className={styles['custom-section']}>
           <div>

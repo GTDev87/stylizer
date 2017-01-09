@@ -11,7 +11,7 @@ function PostList() {
     <div className="listView">
       <ant.Button>ANT HELLO BUTTON</ant.Button>
       {
-        Object.entries(ant)
+        process.env.CLIENT && Object.entries(ant)
           .filter(([componentName]) => !excludeList.includes(componentName))
           .map(([componentName, UIComponent]) =>
             <ComponentStyler

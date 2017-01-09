@@ -11,6 +11,10 @@
   color: #616161;
 }
 
+.error{
+  color: red;
+}
+
 .post-title a{
   text-decoration: none;
   color: #616161;
