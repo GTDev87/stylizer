@@ -98,11 +98,7 @@ class ComponentStyler extends Component {
 
   @autobind
   handleCodeEdit({ target: { value: code } }) {
-    try {
-      this.setState({ code });
-    } catch (e) {
-      this.setState({ code });
-    }
+    this.setState({ code });
   }
 
   @autobind
