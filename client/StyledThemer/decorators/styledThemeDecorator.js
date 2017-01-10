@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
 // maybe rename this
-export default (WrappedComponent) =>
-  styled(WrappedComponent)`
+export default (WC) =>
+  styled(WC)`
     ${props => props.theme &&
                 props.theme.component &&
-                props.theme.component[WrappedComponent.name] ||
+                props.theme.component[WC.name] ||
                 ''
     }
   `;

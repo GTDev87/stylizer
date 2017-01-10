@@ -49,15 +49,21 @@ class ComponentStyler extends Component {
     const { componentName } = this.props;
 
     this.state = {
-      style: '',
-      // propsString: '{\n\n}',
-      loadError: false,
       codeError: false,
       code: `
         class ComponentExample extends React.Component {
           render() {
+
+            const styledTheme = {
+              ${componentName}: 'color: green;'
+            };
+
+            const Styled${componentName} = styledThemeDecorator(${componentName});
+
             return (
-              <ComponentStyledTheme><${componentName}/></ComponentStyledTheme>
+              <ComponentStyledTheme componentStyledThemes={styledTheme}>
+                <Styled${componentName}/>
+              </ComponentStyledTheme>
             )
           }
         };
@@ -66,11 +72,6 @@ class ComponentStyler extends Component {
       `,
     };
   }
-
-  // @autobind
-  // handleStyleEdit({ target: { value: style } }) {
-  //   this.setState({ style });
-  // }
 
   componentDidMount() {
     this._executeCode();
@@ -88,9 +89,9 @@ class ComponentStyler extends Component {
 
     try {
       eval(this._compileCode()).apply(null, Object.values(scope).concat(Object.values(additionalScope)).concat([mountNode])); // eslint-disable-line no-eval, max-len
-      this.setState({ error: null });
+      this.setState({ codeError: null });
     } catch (err) {
-      this.setState({ error: err.toString() });
+      this.setState({ codeError: err.toString() });
     }
   }
 
@@ -98,9 +99,9 @@ class ComponentStyler extends Component {
   @autobind
   handleCodeEdit({ target: { value: code } }) {
     try {
-      this.setState({ codeError: false, code });
+      this.setState({ code });
     } catch (e) {
-      this.setState({ codeError: true, code });
+      this.setState({ code });
     }
   }
 
@@ -122,22 +123,24 @@ class ComponentStyler extends Component {
 
   render() {
     const { componentName } = this.props;
-    const { style, loadError, codeError, code } = this.state;
-
-    if (loadError) { return <ComponentError componentName={componentName} />; }
+    const { codeError, code } = this.state;
 
     return (
       <div className={styles['single-post']}>
         <h3 className={styles['post-title']}>{componentName}</h3>
         <div>
           <div><div ref="mount" className="previewArea" /></div>
-          {codeError && <div className={styles.error}>CODE ERROR</div>}
+          {
+            codeError &&
+              <div>
+                <div className={styles.error}>
+                  CODE ERROR error:
+                </div>
+                <div>{codeError}</div>
+              </div>
+          }
         </div>
         <div className={styles['custom-section']}>
-          <div>
-            <h4>Styles</h4>
-            <div><textarea value={style} onChange={this.handleStyleEdit} /></div>
-          </div>
           <div>
             <h4>Code</h4>
             <div><textarea value={code} onChange={this.handleCodeEdit} /></div>
