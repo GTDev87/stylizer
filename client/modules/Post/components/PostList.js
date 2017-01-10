@@ -18,6 +18,7 @@ function PostList() {
               key={componentName}
               componentName={componentName}
               UIComponent={UIComponent}
+              scope={ant}
             />
         )
       }
