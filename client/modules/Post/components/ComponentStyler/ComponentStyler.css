@@ -4,6 +4,10 @@
   border-radius: 2px;
 }
 
+.full-width {
+  width: 100%;
+}
+
 .post-title{
   font-size: 28px;
   margin-bottom: 16px;

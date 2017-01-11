@@ -36,6 +36,15 @@ Nullcomponent.propTypes = {
   componentName: PropTypes.string,
 };
 
+const getReactRootHtml = (reactRoot) =>
+  reactRoot &&
+  reactRoot.childNodes &&
+  reactRoot.childNodes.length &&
+  reactRoot.childNodes[0].childNodes &&
+  reactRoot.childNodes[0].childNodes[0] &&
+  reactRoot.childNodes[0].childNodes[0].outerHTML ||
+  '';
+
 class ComponentStyler extends Component {
   static propTypes = {
     UIComponent: PropTypes.any.isRequired,
@@ -49,6 +58,7 @@ class ComponentStyler extends Component {
     const { componentName } = this.props;
 
     this.state = {
+      generatedHtml: '',
       codeError: false,
       code: `
         class ComponentExample extends React.Component {
@@ -89,7 +99,7 @@ class ComponentStyler extends Component {
 
     try {
       eval(this._compileCode()).apply(null, Object.values(scope).concat(Object.values(additionalScope)).concat([mountNode])); // eslint-disable-line no-eval, max-len
-      this.setState({ codeError: null });
+      this.setState({ codeError: null, generatedHtml: getReactRootHtml(mountNode) });
     } catch (err) {
       this.setState({ codeError: err.toString() });
     }
@@ -110,7 +120,7 @@ class ComponentStyler extends Component {
       ((${newScope.join(',')}, mountNode) => {
         ${code}
       });
-    `, { presets: ['es2015', 'react', 'stage-1'] }).code;
+    `, { presets: ['es2015', 'react', 'stage-1'], parserOpts: { allowImportExportEverywhere: true } }).code;
   }
 
   // unstable_handleError() { // eslint-disable-line camelcase
@@ -119,7 +129,7 @@ class ComponentStyler extends Component {
 
   render() {
     const { componentName } = this.props;
-    const { codeError, code } = this.state;
+    const { codeError, code, generatedHtml } = this.state;
 
     return (
       <div className={styles['single-post']}>
@@ -137,9 +147,26 @@ class ComponentStyler extends Component {
           }
         </div>
         <div className={styles['custom-section']}>
-          <div>
+          <div className={styles['full-width']}>
             <h4>Code</h4>
-            <div><textarea value={code} onChange={this.handleCodeEdit} /></div>
+            <div>
+              <textarea
+                className={styles['full-width']}
+                value={code}
+                onChange={this.handleCodeEdit}
+              />
+            </div>
+          </div>
+        </div>
+        <div className={styles['custom-section']}>
+          <div className={styles['full-width']}>
+            <h4>Generated Html</h4>
+            <div>
+              <textarea
+                className={styles['full-width']}
+                value={generatedHtml}
+              />
+            </div>
           </div>
         </div>
         <hr className={styles.divider} />
