@@ -10,12 +10,16 @@ import styles from './ComponentStyler.css';
 import styled from 'styled-components';
 import CodeMirror from 'react-codemirror';
 
+import { html as htmlBeautifier } from 'js-beautify';
+
 if (typeof navigator !== 'undefined') {
-  require('codemirror/mode/javascript/javascript'); // eslint-disable-line global-require
+  require('codemirror/mode/jsx/jsx'); // eslint-disable-line global-require
+  require('codemirror/mode/htmlmixed/htmlmixed'); // eslint-disable-line global-require
 }
 
 import ComponentStyledTheme from '../../../../StyledThemer/components/ComponentStyledTheme/ComponentStyledTheme';
 import styledThemeDecorator from '../../../../StyledThemer/decorators/styledThemeDecorator';
+
 
 const additionalScope = { React, ReactDOM, Component, styled, ComponentStyledTheme, styledThemeDecorator };
 
@@ -81,7 +85,7 @@ class ComponentStyler extends Component {
               </ComponentStyledTheme>
             )
           }
-        };
+        }
 
         ReactDOM.render(<ComponentExample/>, mountNode);
       `,
@@ -152,7 +156,7 @@ class ComponentStyler extends Component {
               <CodeMirror
                 value={code}
                 onChange={(edittedCode) => this.setState({ code: edittedCode })}
-                options={{ mode: 'javascript', lineNumbers: true, theme: 'monokai' }}
+                options={{ mode: 'jsx', lineNumbers: true, theme: 'monokai' }}
               />
             </div>
           </div>
@@ -161,9 +165,9 @@ class ComponentStyler extends Component {
           <div className={styles['full-width']}>
             <h4>Generated Html</h4>
             <div>
-              <textarea
-                className={styles['full-width']}
-                value={generatedHtml}
+              <CodeMirror
+                value={htmlBeautifier(generatedHtml)}
+                options={{ mode: 'htmlmixed', theme: 'monokai' }}
               />
             </div>
           </div>
