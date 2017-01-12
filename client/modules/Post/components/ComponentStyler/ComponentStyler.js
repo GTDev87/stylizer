@@ -152,7 +152,7 @@ class ComponentStyler extends Component {
               <CodeMirror
                 value={code}
                 onChange={(edittedCode) => this.setState({ code: edittedCode })}
-                options={{ mode: 'javascript', lineNumbers: true }}
+                options={{ mode: 'javascript', lineNumbers: true, theme: 'monokai' }}
               />
             </div>
           </div>
