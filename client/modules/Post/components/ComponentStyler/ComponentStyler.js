@@ -8,6 +8,11 @@ import { transform } from 'babel-standalone';
 import styles from './ComponentStyler.css';
 
 import styled from 'styled-components';
+import CodeMirror from 'react-codemirror';
+
+if (typeof navigator !== 'undefined') {
+  require('codemirror/mode/javascript/javascript'); // eslint-disable-line global-require
+}
 
 import ComponentStyledTheme from '../../../../StyledThemer/components/ComponentStyledTheme/ComponentStyledTheme';
 import styledThemeDecorator from '../../../../StyledThemer/decorators/styledThemeDecorator';
@@ -105,12 +110,6 @@ class ComponentStyler extends Component {
     }
   }
 
-
-  @autobind
-  handleCodeEdit({ target: { value: code } }) {
-    this.setState({ code });
-  }
-
   @autobind
   _compileCode() {
     const { scope } = this.props;
@@ -150,10 +149,10 @@ class ComponentStyler extends Component {
           <div className={styles['full-width']}>
             <h4>Code</h4>
             <div>
-              <textarea
-                className={styles['full-width']}
+              <CodeMirror
                 value={code}
-                onChange={this.handleCodeEdit}
+                onChange={(edittedCode) => this.setState({ code: edittedCode })}
+                options={{ mode: 'javascript', lineNumbers: true }}
               />
             </div>
           </div>
