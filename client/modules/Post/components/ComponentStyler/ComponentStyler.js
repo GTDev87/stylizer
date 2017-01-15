@@ -12,6 +12,7 @@ import CodeMirror from 'react-codemirror';
 
 import { html as htmlBeautifier } from 'js-beautify';
 
+
 if (typeof navigator !== 'undefined') {
   require('codemirror/mode/jsx/jsx'); // eslint-disable-line global-require
   require('codemirror/mode/htmlmixed/htmlmixed'); // eslint-disable-line global-require
@@ -66,10 +67,22 @@ class ComponentStyler extends Component {
 
     const { componentName } = this.props;
 
+    const lineFormat = (code) => {
+      const lines = code.split('\n');
+
+      const firstLineSpace = lines
+        .find((line) => /([^\s])/.test(line))
+        .match(/^\s*/);
+
+      return lines
+        .map((line) => line.replace(new RegExp(`^${firstLineSpace}`), ''))
+        .join('\n');
+    };
+
     this.state = {
       generatedHtml: '',
       codeError: false,
-      code: `
+      code: lineFormat(`
         class ComponentExample extends React.Component {
           render() {
 
@@ -88,7 +101,7 @@ class ComponentStyler extends Component {
         }
 
         ReactDOM.render(<ComponentExample/>, mountNode);
-      `,
+      `),
     };
   }
 
