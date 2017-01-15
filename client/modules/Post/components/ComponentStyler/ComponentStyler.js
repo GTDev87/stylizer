@@ -24,28 +24,6 @@ import styledThemeDecorator from '../../../../StyledThemer/decorators/styledThem
 
 const additionalScope = { React, ReactDOM, Component, styled, ComponentStyledTheme, styledThemeDecorator };
 
-const ComponentError = ({ componentName }) => (
-  <div className={styles['single-post']}>
-    <h3 className={styles['post-title']}>{componentName}</h3>
-    <div>We have found a problem with {componentName}</div>
-  </div>
-);
-
-ComponentError.propTypes = {
-  componentName: PropTypes.string,
-};
-
-const Nullcomponent = ({ componentName }) => (
-  <div className={styles['single-post']}>
-    <h3 className={styles['post-title']}>{componentName}</h3>
-    <div>{componentName} is not a component</div>
-  </div>
-);
-
-Nullcomponent.propTypes = {
-  componentName: PropTypes.string,
-};
-
 const getReactRootHtml = (reactRoot) =>
   reactRoot &&
   reactRoot.childNodes &&
@@ -83,7 +61,7 @@ class ComponentStyler extends Component {
       generatedHtml: '',
       codeError: false,
       code: lineFormat(`
-        class ComponentExample extends React.Component {
+        class RootComponent extends React.Component {
           render() {
 
             const styledTheme = {
@@ -100,7 +78,7 @@ class ComponentStyler extends Component {
           }
         }
 
-        ReactDOM.render(<ComponentExample/>, mountNode);
+        ReactDOM.render(<RootComponent/>, mountNode);
       `),
     };
   }
@@ -120,7 +98,13 @@ class ComponentStyler extends Component {
     const { scope } = this.props;
 
     try {
-      eval(this._compileCode()).apply(null, Object.values(scope).concat(Object.values(additionalScope)).concat([mountNode])); // eslint-disable-line no-eval, max-len
+      eval(this._compileCode()).apply( // eslint-disable-line no-eval
+        null,
+        Object
+          .values(scope)
+          .concat(Object.values(additionalScope))
+          .concat([mountNode])
+      );
       this.setState({ codeError: null, generatedHtml: getReactRootHtml(mountNode) });
     } catch (err) {
       this.setState({ codeError: err.toString() });
@@ -180,7 +164,7 @@ class ComponentStyler extends Component {
             <div>
               <CodeMirror
                 value={htmlBeautifier(generatedHtml)}
-                options={{ mode: 'htmlmixed', theme: 'monokai' }}
+                options={{ mode: 'htmlmixed', lineNumbers: true, theme: 'monokai' }}
               />
             </div>
           </div>
