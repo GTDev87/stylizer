@@ -5,7 +5,7 @@ const excludeList = ['Carousel', 'Tooltip']; // fuckers (duplication from PostLi
 const calculateDefaultTheme = (library) =>
   Object.entries(library)
     .filter(([componentName]) => !excludeList.includes(componentName))
-    .reduce((agg, [componentName]) => ({ ...agg, [componentName]: 'color: green;' }));
+    .reduce((agg, [componentName]) => ({ ...agg, [componentName]: { default: 'color: green;' } }));
 
 export default process.env.CLIENT ?
   calculateDefaultTheme(ant)

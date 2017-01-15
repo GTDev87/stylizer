@@ -35,9 +35,7 @@ const getReactRootHtml = (reactRoot) =>
   reactRoot &&
   reactRoot.childNodes &&
   reactRoot.childNodes.length &&
-  reactRoot.childNodes[0].childNodes &&
-  reactRoot.childNodes[0].childNodes[0] &&
-  reactRoot.childNodes[0].childNodes[0].outerHTML ||
+  reactRoot.childNodes[0].outerHTML ||
   '';
 
 class ComponentStyler extends Component {
@@ -80,8 +78,6 @@ class ComponentStyler extends Component {
             )
           }
         }
-
-        ReactDOM.render(<RootComponent/>, mountNode);
       `),
     };
   }
@@ -128,6 +124,7 @@ class ComponentStyler extends Component {
     return transform(`
       ((${newScope.join(',')}, mountNode) => {
         ${code}
+        ReactDOM.render(<div><RootComponent/></div>, mountNode);
       });
     `, { presets: ['es2015', 'react', 'stage-1'], parserOpts: { allowImportExportEverywhere: true } }).code;
   }
@@ -139,6 +136,10 @@ class ComponentStyler extends Component {
   render() {
     const { componentName } = this.props;
     const { codeError, code, generatedHtml, libraryTheme } = this.state;
+
+    const componentCssStyles = typeof libraryTheme[componentName] === 'object' ?
+      libraryTheme[componentName].default :
+      libraryTheme[componentName];
 
     return (
       <div className={styles['single-post']}>
@@ -169,12 +170,13 @@ class ComponentStyler extends Component {
         </div>
         <div className={styles['custom-section']}>
           <div className={styles['full-width']}>
-            <h4>Theme CSS</h4>
+            <h4>{componentName} Theme CSS</h4>
             <div>
+
               <CodeMirror
-                value={libraryTheme[componentName]}
+                value={componentCssStyles}
                 onChange={(edittedStyles) =>
-                  this.setState({ libraryTheme: { ...libraryTheme, [componentName]: edittedStyles } })
+                  this.setState({ libraryTheme: { ...libraryTheme, [componentName]: { default: edittedStyles } } })
                 }
                 options={{ mode: 'css', lineNumbers: true, theme: 'monokai' }}
               />
