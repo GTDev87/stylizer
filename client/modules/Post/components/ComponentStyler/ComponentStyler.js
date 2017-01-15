@@ -134,7 +134,7 @@ class ComponentStyler extends Component {
   // }
 
   render() {
-    const { componentName } = this.props;
+    const { componentName, scope } = this.props;
     const { codeError, code, generatedHtml, libraryTheme } = this.state;
 
     const componentCssStyles = typeof libraryTheme[componentName] === 'object' ?
@@ -156,6 +156,19 @@ class ComponentStyler extends Component {
               </div>
           }
         </div>
+        {
+          scope[componentName].propTypes &&
+            <div className={styles['custom-section']}>
+              <div className={styles['full-width']}>
+                <h4>PropTypes</h4>
+                <div>
+                  {
+                    Object.entries(scope[componentName].propTypes)
+                      .map(([propType]) => <div>{propType}</div>)}
+                </div>
+              </div>
+            </div>
+        }
         <div className={styles['custom-section']}>
           <div className={styles['full-width']}>
             <h4>Code</h4>
