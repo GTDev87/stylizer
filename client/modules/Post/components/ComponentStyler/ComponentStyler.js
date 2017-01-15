@@ -35,7 +35,7 @@ const getReactRootHtml = (reactRoot) =>
   reactRoot &&
   reactRoot.childNodes &&
   reactRoot.childNodes.length &&
-  reactRoot.childNodes[0].outerHTML ||
+  reactRoot.childNodes[0].innerHTML ||
   '';
 
 class ComponentStyler extends Component {
