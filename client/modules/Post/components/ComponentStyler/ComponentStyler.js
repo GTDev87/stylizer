@@ -20,9 +20,16 @@ if (typeof navigator !== 'undefined') {
 
 import ComponentStyledTheme from '../../../../StyledThemer/components/ComponentStyledTheme/ComponentStyledTheme';
 import styledThemeDecorator from '../../../../StyledThemer/decorators/styledThemeDecorator';
+import libraryTheme from '../libraryTheme/libraryTheme';
 
-
-const additionalScope = { React, ReactDOM, Component, styled, ComponentStyledTheme, styledThemeDecorator };
+const additionalScope = {
+  React,
+  ReactDOM,
+  styled,
+  ComponentStyledTheme,
+  styledThemeDecorator,
+  libraryTheme,
+};
 
 const getReactRootHtml = (reactRoot) =>
   reactRoot &&
@@ -63,15 +70,10 @@ class ComponentStyler extends Component {
       code: lineFormat(`
         class RootComponent extends React.Component {
           render() {
-
-            const styledTheme = {
-              ${componentName}: 'color: green;'
-            };
-
             const Styled${componentName} = styledThemeDecorator(${componentName});
 
             return (
-              <ComponentStyledTheme componentStyledThemes={styledTheme}>
+              <ComponentStyledTheme componentStyledThemes={libraryTheme}>
                 <Styled${componentName}/>
               </ComponentStyledTheme>
             )
