@@ -16,6 +16,7 @@ import { html as htmlBeautifier } from 'js-beautify';
 if (typeof navigator !== 'undefined') {
   require('codemirror/mode/jsx/jsx'); // eslint-disable-line global-require
   require('codemirror/mode/htmlmixed/htmlmixed'); // eslint-disable-line global-require
+  require('codemirror/mode/css/css'); // eslint-disable-line global-require
 }
 
 import ComponentStyledTheme from '../../../../StyledThemer/components/ComponentStyledTheme/ComponentStyledTheme';
@@ -167,6 +168,17 @@ class ComponentStyler extends Component {
               <CodeMirror
                 value={htmlBeautifier(generatedHtml)}
                 options={{ mode: 'htmlmixed', lineNumbers: true, theme: 'monokai' }}
+              />
+            </div>
+          </div>
+        </div>
+        <div className={styles['custom-section']}>
+          <div className={styles['full-width']}>
+            <h4>Theme CSS</h4>
+            <div>
+              <CodeMirror
+                value={libraryTheme[componentName]}
+                options={{ mode: 'css', lineNumbers: true, theme: 'monokai' }}
               />
             </div>
           </div>
