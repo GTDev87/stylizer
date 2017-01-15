@@ -164,7 +164,7 @@ class ComponentStyler extends Component {
                 <div>
                   {
                     Object.entries(scope[componentName].propTypes)
-                      .map(([propType]) => <div>{propType}</div>)}
+                      .map(([propType]) => <div key={propType}>{propType}</div>)}
                 </div>
               </div>
             </div>
