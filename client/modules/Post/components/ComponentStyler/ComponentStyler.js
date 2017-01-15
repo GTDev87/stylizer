@@ -21,7 +21,7 @@ if (typeof navigator !== 'undefined') {
 
 import ComponentStyledTheme from '../../../../StyledThemer/components/ComponentStyledTheme/ComponentStyledTheme';
 import styledThemeDecorator from '../../../../StyledThemer/decorators/styledThemeDecorator';
-import libraryTheme from '../libraryTheme/libraryTheme';
+import libraryThemeDefault from '../libraryTheme/libraryTheme';
 
 const additionalScope = {
   React,
@@ -29,7 +29,6 @@ const additionalScope = {
   styled,
   ComponentStyledTheme,
   styledThemeDecorator,
-  libraryTheme,
 };
 
 const getReactRootHtml = (reactRoot) =>
@@ -68,6 +67,7 @@ class ComponentStyler extends Component {
     this.state = {
       generatedHtml: '',
       codeError: false,
+      libraryTheme: libraryThemeDefault,
       code: lineFormat(`
         class RootComponent extends React.Component {
           render() {
@@ -90,15 +90,17 @@ class ComponentStyler extends Component {
     this._executeCode();
   }
 
-  componentDidUpdate(_, { code: prevCode }) {
-    const { code } = this.state;
-    if (code !== prevCode) { this._executeCode(); }
+  componentDidUpdate(_, { code: prevCode, libraryTheme: preLibraryTheme }) {
+    const { code, libraryTheme } = this.state;
+    if (!(code !== prevCode || JSON.stringify(libraryTheme) !== JSON.stringify(preLibraryTheme))) { return; }
+    this._executeCode();
   }
 
   @autobind
   _executeCode() {
     const { mount: mountNode } = this.refs;
     const { scope } = this.props;
+    const { libraryTheme } = this.state;
 
     try {
       eval(this._compileCode()).apply( // eslint-disable-line no-eval
@@ -106,6 +108,7 @@ class ComponentStyler extends Component {
         Object
           .values(scope)
           .concat(Object.values(additionalScope))
+          .concat([libraryTheme])
           .concat([mountNode])
       );
       this.setState({ codeError: null, generatedHtml: getReactRootHtml(mountNode) });
@@ -118,7 +121,10 @@ class ComponentStyler extends Component {
   _compileCode() {
     const { scope } = this.props;
     const { code } = this.state;
-    const newScope = Object.keys(scope).concat(Object.keys(additionalScope));
+    const newScope = Object
+      .keys(scope)
+      .concat(Object.keys(additionalScope))
+      .concat(['libraryTheme']);
     return transform(`
       ((${newScope.join(',')}, mountNode) => {
         ${code}
@@ -132,7 +138,7 @@ class ComponentStyler extends Component {
 
   render() {
     const { componentName } = this.props;
-    const { codeError, code, generatedHtml } = this.state;
+    const { codeError, code, generatedHtml, libraryTheme } = this.state;
 
     return (
       <div className={styles['single-post']}>
@@ -163,22 +169,25 @@ class ComponentStyler extends Component {
         </div>
         <div className={styles['custom-section']}>
           <div className={styles['full-width']}>
-            <h4>Generated Html</h4>
+            <h4>Theme CSS</h4>
             <div>
               <CodeMirror
-                value={htmlBeautifier(generatedHtml)}
-                options={{ mode: 'htmlmixed', lineNumbers: true, theme: 'monokai' }}
+                value={libraryTheme[componentName]}
+                onChange={(edittedStyles) =>
+                  this.setState({ libraryTheme: { ...libraryTheme, [componentName]: edittedStyles } })
+                }
+                options={{ mode: 'css', lineNumbers: true, theme: 'monokai' }}
               />
             </div>
           </div>
         </div>
         <div className={styles['custom-section']}>
           <div className={styles['full-width']}>
-            <h4>Theme CSS</h4>
+            <h4>Generated Html (Read Only)</h4>
             <div>
               <CodeMirror
-                value={libraryTheme[componentName]}
-                options={{ mode: 'css', lineNumbers: true, theme: 'monokai' }}
+                value={htmlBeautifier(generatedHtml)}
+                options={{ mode: 'htmlmixed', lineNumbers: true, theme: 'monokai', readOnly: true }}
               />
             </div>
           </div>
