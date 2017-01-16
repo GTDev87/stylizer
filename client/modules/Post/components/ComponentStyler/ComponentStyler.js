@@ -12,7 +12,6 @@ import CodeMirror from 'react-codemirror';
 
 import { html as htmlBeautifier } from 'js-beautify';
 
-
 if (typeof navigator !== 'undefined') {
   require('codemirror/mode/jsx/jsx'); // eslint-disable-line global-require
   require('codemirror/mode/htmlmixed/htmlmixed'); // eslint-disable-line global-require
@@ -164,7 +163,10 @@ class ComponentStyler extends Component {
                 <div>
                   {
                     Object.entries(scope[componentName].propTypes)
-                      .map(([propType]) => <div key={propType}>{propType}</div>)}
+                      .map(([propType]) =>
+                        <div key={propType}>{propType}</div>
+                      )
+                  }
                 </div>
               </div>
             </div>
@@ -201,7 +203,7 @@ class ComponentStyler extends Component {
             <h4>Generated Html (Read Only)</h4>
             <div>
               <CodeMirror
-                value={htmlBeautifier(generatedHtml)}
+                value={htmlBeautifier(generatedHtml, { unformatted: [] })}
                 options={{ mode: 'htmlmixed', lineNumbers: true, theme: 'monokai', readOnly: true }}
               />
             </div>
