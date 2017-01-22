@@ -122,6 +122,7 @@ class ComponentStyler extends Component {
       .concat(['libraryTheme']);
     return transform(`
       ((${newScope.join(',')}, mountNode) => {
+        ReactDOM.unmountComponentAtNode(mountNode);
         ${code}
         ReactDOM.render(<div><RootComponent/></div>, mountNode);
       });
