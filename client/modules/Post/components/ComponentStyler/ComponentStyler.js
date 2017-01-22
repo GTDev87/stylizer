@@ -30,6 +30,59 @@ const additionalScope = {
   styledThemeDecorator,
 };
 
+const propTypesArray = [{
+  key: 'array',
+  test: PropTypes.array,
+  isRequired: PropTypes.array.isRequired,
+}, {
+  key: 'boolean',
+  test: PropTypes.bool,
+  isRequired: PropTypes.bool.isRequired,
+}, {
+  key: 'function',
+  test: PropTypes.func,
+  isRequired: PropTypes.func.isRequired,
+}, {
+  key: 'number',
+  test: PropTypes.number,
+  isRequired: PropTypes.number.isRequired,
+}, {
+  key: 'object',
+  test: PropTypes.object,
+  isRequired: PropTypes.array.isRequired,
+}, {
+  key: 'string',
+  test: PropTypes.string,
+  isRequired: PropTypes.string.isRequired,
+}, {
+  key: 'node',
+  test: PropTypes.node,
+  isRequired: PropTypes.node.isRequired,
+}, {
+  key: 'element',
+  test: PropTypes.element,
+  isRequired: PropTypes.element.isRequired,
+}];
+
+const getReactPropType = (propTypeFunc) => {
+  let name = 'custom';
+  let isRequired = false;
+
+  propTypesArray.some((propType) => {
+    if (propTypeFunc === propType.test) {
+      name = propType.key;
+      return true;
+    }
+    if (propTypeFunc === propType.isRequired) {
+      name = propType.key;
+      isRequired = true;
+      return true;
+    }
+    return false;
+  });
+  return { name, isRequired };
+};
+
 const getReactRootHtml = (reactRoot) =>
   reactRoot &&
   reactRoot.childNodes &&
@@ -164,9 +217,22 @@ class ComponentStyler extends Component {
                 <div>
                   {
                     Object.entries(scope[componentName].propTypes)
-                      .map(([propType]) =>
-                        <div key={propType}>{propType}</div>
-                      )
+                      .map(([propType, propTypeFunc]) => {
+                        const { name, isRequired } = getReactPropType(propTypeFunc);
+                        return (
+                          <div key={propType} className={styles.horizontal}>
+                            <div className={styles['prop-space']}>
+                              {propType}
+                            </div>
+                            <div className={styles['prop-space']}>
+                              {name}
+                            </div>
+                            <div className={styles['prop-space']}>
+                              {isRequired}
+                            </div>
+                          </div>
+                        );
+                      })
                   }
                 </div>
               </div>
@@ -188,7 +254,6 @@ class ComponentStyler extends Component {
           <div className={styles['full-width']}>
             <h4>{componentName} Theme CSS</h4>
             <div>
-
               <CodeMirror
                 value={componentCssStyles}
                 onChange={(edittedStyles) =>
